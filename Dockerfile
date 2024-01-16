@@ -12,14 +12,9 @@ RUN mkdir -p /app/tachidesk
 WORKDIR /app/tachidesk
 
 # Download the latest release from the GitHub repository
-RUN if [ -z "$VERSION" ]; then \
-      curl -s https://api.github.com/repos/Suwayomi/Suwayomi-Server/releases/latest \
-      | jq -r ".assets[] | select(.name | test(\"Suwayomi-Server-v[0-9.]*-r[0-9]*\\.jar$\")) | .browser_download_url" \
-      | xargs curl -L -o Tachidesk-Server-Latest.jar; \
-      else \
-      curl -L -o Tachidesk-Server-Latest.jar "https://github.com/Suwayomi/Suwayomi-Server/releases/download/v${VERSION}/Suwayomi-Server-v${VERSION}.jar"; \
-      fi
-
+RUN curl -s https://api.github.com/repos/Suwayomi/Suwayomi-Server-preview/releases/latest \
+      | jq -r ".assets[] | select(.name | endswith(\".jar\")) | .browser_download_url" \
+      | xargs curl -L -o Tachidesk-Server-Latest.jar
 
 # Container Labels
 LABEL maintainer="Taos15" \
