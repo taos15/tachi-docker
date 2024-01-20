@@ -19,3 +19,6 @@ scripts/OpenJDK*
 scripts/zulu*
 scripts/electron-*
 scripts/rcedit-*
+
+# ignore secrets
+.env

@@ -1,0 +1,16 @@
+services:
+  dev-tachidesk:
+    container_name: dev-tachidesk
+    build:
+      context: .
+      # dockerfile: Dockerfile
+      dockerfile: devDockerfile
+    ports:
+      - 3001:4567
+    environment:
+      PUID: 1000
+      PGID: 1000
+    security_opt:
+      - apparmor:unconfined
+    # volumes:
+    # - ./server/build:/build

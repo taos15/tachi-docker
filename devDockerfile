@@ -1,13 +1,24 @@
 # Use eclipse-temurin JRE
 
 # Stage 1: Build the Suwayomi-Server app
-FROM ghcr.io/linuxserver/baseimage-alpine:3.17
+FROM eclipse-temurin:11-jdk-focal AS builder
 
 # set version label
 ARG BUILD_DATE
 ARG VERSION
 ARG SUWAYOMI_RELEASE
 LABEL maintainer="taos15"
+
+WORKDIR /source
+RUN apt-get update && apt-get install -y git && \
+    git clone --branch master https://github.com/Suwayomi/Suwayomi-Server.git .
+
+# Build the project
+RUN ./gradlew shadowJar && \
+      mv ./server/build/Suwayomi-Server-*.jar /Suwayomi-Server.jar
+
+FROM ghcr.io/linuxserver/baseimage-alpine:3.17
+
 
 # Install dependencies
 RUN  apk add -U --upgrade --no-cache curl openjdk8-jre-base tzdata jq
@@ -16,16 +27,11 @@ RUN  apk add -U --upgrade --no-cache curl openjdk8-jre-base tzdata jq
 RUN mkdir -p /app/suwayomi-server
 RUN mkdir -p /build
 
-RUN \
-      if [ -z ${SUWAYOMI_RELEASE+x} ];  then \
-      SUWAYOMI_RELEASE=$(curl -sX GET "https://api.github.com/repos/Suwayomi/Suwayomi-Server-preview/releases/latest" \
-      | awk '/tag_name/{print $4;exit}' FS='[""]'); \
-      fi && \
-      curl -o \
-      /build/Suwayomi-Server.jar -L \
-      "https://github.com/Suwayomi/Suwayomi-Server-preview/releases/download/${SUWAYOMI_RELEASE}/Suwayomi-Server-${SUWAYOMI_RELEASE}.jar" 
+WORKDIR /app/suwayomi-server
 
-
+# Copy the jar file from the builder stage
+COPY --from=builder /Suwayomi-Server.jar /build
+      
 # Container Labels
 LABEL maintainer="Taos15" \
       org.opencontainers.image.title="Tachi-docker" \

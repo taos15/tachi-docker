@@ -6,9 +6,13 @@
 
 # Pre-stage some files & directories for permissions purposes
 mkdir -p /app/
+mkdir -p /build
 
 # permissions
 lsiown -R abc:abc \
     /config \
     /home \
-    /app/tachidesk
+    /app/suwayomi-server \
+    /build
+
+mv /build/Suwayomi-Server.jar /app/suwayomi-server/Suwayomi-Server.jar 

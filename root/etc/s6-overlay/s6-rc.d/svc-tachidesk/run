@@ -1,9 +1,10 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
-# export TACHIDESK_DBPATH=/config
+mv /build/Suwayomi-Server.jar /app/suwayomi-server/Suwayomi-Server.jar 
+# export suwayomi-server_DBPATH=/config
 
 exec \
     s6-notifyoncheck -d -n 300 -w 1000 -c "nc -z localhost 8085" \
-    cd /app/tachidesk s6-setuidgid abc java -Dsuwayomi.tachidesk.config.server.rootDir="/config" -jar /app/tachidesk/Tachidesk-Server-Latest.jar \
+    s6-setuidgid abc java -Dsuwayomi.suwayomi-server.config.server.rootDir="/config" -jar /app/suwayomi-server/Suwayomi-Server.jar \
     -nobrowser -data=/config
