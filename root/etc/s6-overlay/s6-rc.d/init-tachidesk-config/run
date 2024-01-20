@@ -15,4 +15,6 @@ lsiown -R abc:abc \
     /app/suwayomi-server \
     /build
 
-mv /build/Suwayomi-Server.jar /app/suwayomi-server/Suwayomi-Server.jar 
+if [ -f "/build/Suwayomi-Server.jar" ]; then
+    mv -f /build/Suwayomi-Server.jar /app/suwayomi-server/Suwayomi-Server.jar
+fi
