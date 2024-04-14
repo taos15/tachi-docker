@@ -34,7 +34,7 @@ jobs:
           echo "{latest_local}={LATEST_LOCAL}" >> $GITHUB_OUTPUT
 
       - name: Trigger MultiArch Master CI Workflow
-        if: steps.get_latest_upstream.outputs.latest_upstream != steps.get_latest_local_release.outputs.latest_local
+        if: env.LATEST_UPSTREAM != env.LATEST_MY_RELEASE
         run: |
           echo "last local: ${{ env.OWNER_REPO }} or ${{steps.get_latest_local_release.outputs.latest_local}} and upstream: ${{ env.UPSTREAM_REPO }} or ${{steps.get_latest_upstream.outputs.latest_upstream}}  "
           curl -X POST \
