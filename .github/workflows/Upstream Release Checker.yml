@@ -36,7 +36,7 @@ jobs:
       - name: Trigger MultiArch Master CI Workflow
         # if: env.latest_upstream != env.latest_local
         run: |
-          echo "last local: ${{ env.latest_local }}or ${{steps.get_latest_local_release.outputs.latest_local}} and upstream: ${{ env.latest_upstream }} or ${{steps.get_latest_upstream.outputs.latest_upstream}}  "
+          echo "last local: ${{ env.latest_local }} and upstream: ${{ env.latest_upstream }} or ${{ steps.get_latest_upstream.outputs.latest_upstream }}"
         #   curl -X POST \
         #     -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
         #     -H "Accept: application/vnd.github.v3+json" \
