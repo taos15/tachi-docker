@@ -6,24 +6,38 @@ on:
 
   workflow_dispatch:
 
+env:
+    OWNER_REPO: taos15/tachi-docker
+    UPSTREAM_REPO: Suwayomi/Suwayomi-Server-preview
+  
+
 jobs:
   check-and-trigger:
     runs-on: ubuntu-latest
     steps:
       - name: Check for new release in upstream repository
-        id: get_latest_release
+        id: get_latest_upstream
         run: |
-          LATEST_RELEASE=$(curl -sH "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/Suwayomi/Suwayomi-Server-preview/releases/latest" \
+          LATEST_UPSTREAM=$(curl -sH "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ env.UPSTREAM_REPO }}/releases/latest" \
             | jq -r '.tag_name')
-          echo "Latest release version: $LATEST_RELEASE"
-          echo "{latest_release}={LATEST_RELEASE}" >> $GITHUB_OUTPUT
+          echo "Latest upstream release version: $LATEST_UPSTREAM"
+          echo "{latest_upstream}={LATEST_UPSTREAM}" >> $GITHUB_OUTPUT
 
-    #   - name: Trigger MultiArch Master CI Workflow
-    #     if: steps.get_latest_release.outputs.latest_release
-    #     run: |
-    #       curl -X POST \
-    #         -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN }}" \
-    #         -H "Accept: application/vnd.github.v3+json" \
-    #         -d '{"event_type": "upstream-release", "client_payload": {"suwayomi_release": "${{ steps.get_latest_release.outputs.latest_release }}"} }' \
-    #         "https://api.github.com/repos/your_owner/your_repo/dispatches"
+      - name: Check for last release in local repository
+        id: get_latest_local_release
+        run: |
+          LATEST_LOCAL=$(curl -sH "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+           "https://api.github.com/repos/${{ env.OWNER_REPO }}/releases/latest" \
+           | jq -r '.tag_name')
+          echo "Latest local release version: $LATEST_LOCAL"
+          echo "{latest_local}={LATEST_LOCAL}" >> $GITHUB_OUTPUT
+
+      - name: Trigger MultiArch Master CI Workflow
+        if: steps.get_latest_upstream.outputs.latest_upstream != steps.get_latest_local_release.outputs.latest_local
+        run: |
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -d '{"event_type": "upstream-release", "client_payload": {"suwayomi_release": "${{ steps.get_latest_upstream.outputs.latest_upstream }}"} }' \
+            "https://api.github.com/repos/your_owner/your_repo/dispatches"
