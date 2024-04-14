@@ -1,0 +1,27 @@
+name: Upstream Release Checker
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs every hour, adjust as needed
+
+jobs:
+  check-and-trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for new release in upstream repository
+        id: get_latest_release
+        run: |
+          LATEST_RELEASE=$(curl -sH "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/Suwayomi/Suwayomi-Server-preview/releases/latest" \
+            | jq -r '.tag_name')
+          echo "Latest release version: $LATEST_RELEASE"
+          echo "::set-output name=latest_release::${LATEST_RELEASE}"
+
+    #   - name: Trigger MultiArch Master CI Workflow
+    #     if: steps.get_latest_release.outputs.latest_release
+    #     run: |
+    #       curl -X POST \
+    #         -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN }}" \
+    #         -H "Accept: application/vnd.github.v3+json" \
+    #         -d '{"event_type": "upstream-release", "client_payload": {"suwayomi_release": "${{ steps.get_latest_release.outputs.latest_release }}"} }' \
+    #         "https://api.github.com/repos/your_owner/your_repo/dispatches"
