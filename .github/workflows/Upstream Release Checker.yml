@@ -31,7 +31,7 @@ jobs:
            "https://api.github.com/repos/${{ env.OWNER_REPO }}/releases/latest" \
            | jq -r '.tag_name')
           echo "Latest local release version: $LATEST_LOCAL"
-          echo "{latest_local}={LATEST_LOCAL}" >> $GITHUB_ENV
+          echo "{latest_local}=${LATEST_LOCAL}" >> $GITHUB_ENV
 
       - name: Trigger MultiArch Master CI Workflow
         # if: env.latest_upstream != env.latest_local
