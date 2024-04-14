@@ -22,7 +22,7 @@ jobs:
             "https://api.github.com/repos/${{ env.UPSTREAM_REPO }}/releases/latest" \
             | jq -r '.tag_name')
           echo "Latest upstream release version: $LATEST_UPSTREAM"
-          echo "{latest_upstream}=${LATEST_UPSTREAM}" >> $GITHUB_ENV
+          echo "latest_upstream=$LATEST_UPSTREAM" >> $GITHUB_ENV
 
       - name: Check for last release in local repository
         id: get_latest_local_release
@@ -31,12 +31,12 @@ jobs:
            "https://api.github.com/repos/${{ env.OWNER_REPO }}/releases/latest" \
            | jq -r '.tag_name')
           echo "Latest local release version: $LATEST_LOCAL"
-          echo "latest_local=${LATEST_LOCAL}" >> $GITHUB_ENV
+          echo "latest_local=$LATEST_LOCAL" >> $GITHUB_ENV
 
       - name: Trigger MultiArch Master CI Workflow
         # if: env.latest_upstream != env.latest_local
         run: |
-          echo "last local: ${{ env.LATEST_LOCAL }} or ${{steps.get_latest_local_release.outputs.latest_local}} and upstream: ${{ env.LATEST_UPSTREAM }} or ${{steps.get_latest_upstream.outputs.latest_upstream}}  "
+          echo "last local: ${{ env.latest_local }}or ${{steps.get_latest_local_release.outputs.latest_local}} and upstream: ${{ env.latest_upstream }} or ${{steps.get_latest_upstream.outputs.latest_upstream}}  "
         #   curl -X POST \
         #     -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
         #     -H "Accept: application/vnd.github.v3+json" \
