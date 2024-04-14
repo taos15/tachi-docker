@@ -4,6 +4,8 @@ on:
   schedule:
     - cron: '0 * * * *'  # Runs every hour, adjust as needed
 
+  workflow_dispatch:
+
 jobs:
   check-and-trigger:
     runs-on: ubuntu-latest
