@@ -9,6 +9,9 @@ on:
       - "**.md"
     tags:
       - v*
+  
+  repository_dispatch:
+    types: [upstream-release]
 
   workflow_dispatch:
     inputs:
