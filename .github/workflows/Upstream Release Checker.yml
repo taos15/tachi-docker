@@ -40,4 +40,4 @@ jobs:
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             -d '{"event_type": "upstream-release", "client_payload": {"suwayomi_release": "${{ env.latest_upstream }}"} }' \
-            "https://api.github.com/repos/your_owner/your_repo/dispatches"
+            "https://api.github.com/repos/${{ env.OWNER_REPO }}/dispatches"
