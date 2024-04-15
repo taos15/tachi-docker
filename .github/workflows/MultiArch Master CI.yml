@@ -68,7 +68,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           outputs: type=image,push=true
-          # outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
+          build-args: SUWAYOMI_RELEASE=${{ env.SUWAYOMI_RELEASE }}
       - name: Export digest
         run: |
           mkdir -p /tmp/digests
