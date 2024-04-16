@@ -2,7 +2,7 @@ name: Upstream Release Checker
 
 on:
   schedule:
-    - cron: '0 0,12 * * *'  # Runs every hour, adjust as needed
+    - cron: '0/5 * * * *'  # Runs every 12 hour(0 0,12 * * *), adjust as needed
 
   workflow_dispatch:
 
