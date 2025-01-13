@@ -10,7 +10,7 @@ ARG SUWAYOMI_RELEASE
 LABEL maintainer="taos15"
 
 # Install dependencies
-RUN  apk add -U --upgrade --no-cache curl openjdk8-jre-base tzdata jq
+RUN  apk add -U --upgrade --no-cache curl openjdk21-jre tzdata jq
 
 # Create the /config directory
 RUN mkdir -p /app/suwayomi-server
