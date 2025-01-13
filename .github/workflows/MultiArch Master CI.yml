@@ -71,22 +71,25 @@ jobs:
     
       - name: Export multi-arch digest
         run: |
-         
+          
           TAG_TO_INSPECT="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.SUWAYOMI_RELEASE }}"
           
           
-          FULL_DIGEST="$(docker buildx imagetools inspect "$TAG_TO_INSPECT" --raw | jq -r '.descriptor.digest')"
-                    
+          FULL_DIGEST="$(docker buildx imagetools inspect "$TAG_TO_INSPECT" --format '{{.Digest}}')"
+          
+          
           if [ -z "$FULL_DIGEST" ]; then
             echo "Failed to retrieve multi-arch digest for $TAG_TO_INSPECT"
             exit 1
           fi
-      
+
+          
           mkdir -p /tmp/digests
-                   
+          
+          
           SHORT_DIGEST="${FULL_DIGEST#sha256:}"
 
-         
+          
           echo "$FULL_DIGEST" > "/tmp/digests/$SHORT_DIGEST"
 
           echo "Successfully exported multi-arch digest: $FULL_DIGEST"
@@ -121,7 +124,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest
-            # Use semver if your SUWAYOMI_RELEASE is semver-like, or just keep it raw
+            
             type=semver,pattern=${{ env.SUWAYOMI_RELEASE }}
 
       - name: Login to Docker
@@ -135,8 +138,7 @@ jobs:
       - name: Create manifest list and push
         working-directory: /tmp/digests
         run: |
-          # Use the JSON from metadata-action
-          # For each file in /tmp/digests (likely just one), we add it with the "sha256:" prefix
+         
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
 
