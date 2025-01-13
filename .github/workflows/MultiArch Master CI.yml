@@ -71,27 +71,22 @@ jobs:
     
       - name: Export multi-arch digest
         run: |
-          # We build/pushed "latest" and "v1.2.3" (for example).
-          # We'll pick SUWAYOMI_RELEASE as the reference to inspect:
+         
           TAG_TO_INSPECT="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.SUWAYOMI_RELEASE }}"
           
-          # Retrieve the full manifest digest, e.g. "sha256:abc123..."
-          FULL_DIGEST="$(docker buildx imagetools inspect "$TAG_TO_INSPECT" --format '{{.Digest}}')"
           
-          # If for any reason that fails, fail fast:
+          FULL_DIGEST="$(docker buildx imagetools inspect "$TAG_TO_INSPECT" --raw | jq -r '.descriptor.digest')"
+                    
           if [ -z "$FULL_DIGEST" ]; then
             echo "Failed to retrieve multi-arch digest for $TAG_TO_INSPECT"
             exit 1
           fi
-
-          # Create the artifact folder
+      
           mkdir -p /tmp/digests
-          
-          # We'll remove the 'sha256:' prefix and use the remainder as the file name:
+                   
           SHORT_DIGEST="${FULL_DIGEST#sha256:}"
 
-          # Write the short digest as the file name, so "abc123..."
-          # We'll store the full digest inside the file in case you want to read it
+         
           echo "$FULL_DIGEST" > "/tmp/digests/$SHORT_DIGEST"
 
           echo "Successfully exported multi-arch digest: $FULL_DIGEST"
